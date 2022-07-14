@@ -16,6 +16,7 @@ dependencies:
   get_storage: ^2.0.3
   fluttertoast: ^8.0.9
   line_awesome_flutter: ^2.0.0
+  uuid: ^3.0.6
 #  flutter_admin_scaffold: ^1.1.1
 
 dev_dependencies:

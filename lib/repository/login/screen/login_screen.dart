@@ -1,4 +1,5 @@
 import 'package:cricland_admin/constants/static_colors.dart';
+import 'package:cricland_admin/repository/home/controller/home_controller.dart';
 import 'package:cricland_admin/repository/login/controller/login_controller.dart';
 import 'package:cricland_admin/widgets/solid_button.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(HomeController());
     return GetBuilder<LoginController>(
       init: LoginController(context: context),
       autoRemove: true,

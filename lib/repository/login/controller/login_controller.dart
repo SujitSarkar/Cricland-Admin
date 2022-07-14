@@ -2,21 +2,26 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cricland_admin/constants/dynamic_size.dart';
 import 'package:cricland_admin/constants/routes.dart';
+import 'package:cricland_admin/constants/static_string.dart';
+import 'package:cricland_admin/repository/home/controller/home_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController{
   LoginController({required this.context});
   late BuildContext context;
-  Rx<bool> loading=false.obs;
+  late RxBool loading;
   late TextEditingController username;
   late TextEditingController password;
 
   @override
   void onInit() {
     super.onInit();
+
+    loading = false.obs;
     username = TextEditingController(text: '');
     password = TextEditingController(text: '');
+    autoLogin();
   }
 
   @override
@@ -31,24 +36,52 @@ class LoginController extends GetxController{
   Future<void> validateAdmin()async{
     loading(true);
     try{
-      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('admin')
+      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection(StaticString.adminCollection)
           .where('username', isEqualTo: username.text).get();
       final List<QueryDocumentSnapshot> user = snapshot.docs;
       if(user.isNotEmpty && user.first.get('password')==password.text){
+        HomeController.instance.setData('username', username.text);
+        HomeController.instance.setData('password', password.text);
         loading(false);
         Navigator.pushReplacementNamed(context, Routes.home);
       }else{
         loading(false);
-        showToast('Wrong Username or Password');
+        showToast(StaticString.wrongUserPass);
       }
     }
     on SocketException{
       loading(false);
-      showToast('No Internet Connection !');
+      showToast(StaticString.noInternet);
     }
     catch(error){
       loading(false);
       showToast(error.toString());
+    }
+  }
+
+  Future<void> autoLogin()async{
+    if(HomeController.instance.getString('username')!=null &&
+        HomeController.instance.getString('password')!=null){
+      loading(true);
+      try{
+        QuerySnapshot snapshot = await FirebaseFirestore.instance.collection(StaticString.adminCollection)
+            .where('username', isEqualTo:HomeController.instance.getString('username')).get();
+        final List<QueryDocumentSnapshot> user = snapshot.docs;
+        if(user.isNotEmpty && user.first.get('password')
+            ==HomeController.instance.getString('password')){
+          loading(false);
+          Navigator.pushReplacementNamed(context, Routes.home);
+        }else{
+          loading(false);
+          showToast(StaticString.wrongUserPass);
+        }
+      } on SocketException{
+        loading(false);
+        showToast(StaticString.noInternet);
+      } catch(error){
+        loading(false);
+        showToast(error.toString());
+      }
     }
   }
 }

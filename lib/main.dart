@@ -1,6 +1,6 @@
 import 'package:cricland_admin/constants/routes.dart';
+import 'package:cricland_admin/constants/static_string.dart';
 import 'package:cricland_admin/constants/static_variavles.dart';
-import 'package:cricland_admin/constants/string_constant.dart';
 import 'package:cricland_admin/repository/article/screen/article_list.dart';
 import 'package:cricland_admin/repository/article/screen/write_article.dart';
 import 'package:cricland_admin/repository/home/screen/home_screen.dart';
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: StringConstant.appName,
+      title: StaticString.appName,
       theme:StaticVar.themeData,
       initialRoute: Routes.login,
       routes: {

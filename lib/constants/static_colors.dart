@@ -9,8 +9,9 @@ class StaticColor {
   static const Color goldenColor = Color(0xffA77A12);
   static const Color whiteColor = Colors.white;
   static final Color hintColor = Colors.grey.shade600;
-  static final Color sideBarColor = Colors.blueGrey.shade50;
+  static final Color sideBarColor = Colors.blueGrey.shade100;
   static final Color hoverColor = Colors.blueGrey.shade100;
+  static final Color deleteColor = Colors.red.shade700;
 
   static const Map<int, Color> primaryColorMap = {
     50: Color.fromRGBO(3, 80, 139, .1),

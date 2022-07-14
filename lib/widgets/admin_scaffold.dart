@@ -1,5 +1,7 @@
 import 'package:cricland_admin/constants/dynamic_size.dart';
+import 'package:cricland_admin/constants/routes.dart';
 import 'package:cricland_admin/constants/static_colors.dart';
+import 'package:cricland_admin/repository/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 
 @immutable
@@ -9,8 +11,13 @@ class AdminScaffold extends StatefulWidget {
   late Function(ScaffoldMenuItem) onMenuTap;
   final Widget body;
 
-  AdminScaffold({Key? key, required this.menuItem, required this.title,
-    required this.onMenuTap,required this.body}): super(key: key);
+  AdminScaffold(
+      {Key? key,
+      required this.menuItem,
+      required this.title,
+      required this.onMenuTap,
+      required this.body})
+      : super(key: key);
 
   @override
   State<AdminScaffold> createState() => _AdminScaffoldState();
@@ -18,6 +25,7 @@ class AdminScaffold extends StatefulWidget {
 
 class _AdminScaffoldState extends State<AdminScaffold> {
   late String selectedRoute;
+
   @override
   void initState() {
     super.initState();
@@ -34,19 +42,25 @@ class _AdminScaffoldState extends State<AdminScaffold> {
             flex: 2,
             child: Column(
               children: [
-                Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: StaticColor.sideBarColor,
-                    border: Border(
-                      bottom: BorderSide(color: StaticColor.hintColor,width: 0.5)
-                    )
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: dynamicSize(.022)),
-                  child: Text(
-                  widget.title,
-                    style: TextStyle(color: StaticColor.primaryColor,
-                        fontSize: dynamicSize(.023),fontWeight: FontWeight.bold),
+                InkWell(
+                  onTap: () {
+                    HomeController.instance.changeCurrentScreen(Routes.home);
+                  },
+                  child: Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        color: StaticColor.sideBarColor,
+                        border: Border(
+                            bottom: BorderSide(
+                                color: StaticColor.hintColor, width: 0.5))),
+                    padding: EdgeInsets.symmetric(vertical: dynamicSize(.022)),
+                    child: Text(
+                      widget.title,
+                      style: TextStyle(
+                          color: StaticColor.primaryColor,
+                          fontSize: dynamicSize(.023),
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
                 Expanded(
@@ -55,22 +69,27 @@ class _AdminScaffoldState extends State<AdminScaffold> {
                     backgroundColor: StaticColor.sideBarColor,
                     child: ListView.builder(
                       itemCount: widget.menuItem.length,
-                      itemBuilder: (context, index)=>ListTile(
+                      itemBuilder: (context, index) => ListTile(
                         tileColor: selectedRoute == widget.menuItem[index].route
-                            ?StaticColor.primaryColor:Colors.transparent,
+                            ? StaticColor.primaryColor
+                            : Colors.transparent,
                         textColor: selectedRoute == widget.menuItem[index].route
-                            ?StaticColor.whiteColor:StaticColor.textColor,
+                            ? StaticColor.whiteColor
+                            : StaticColor.textColor,
                         iconColor: selectedRoute == widget.menuItem[index].route
-                            ?StaticColor.whiteColor:StaticColor.hintColor,
+                            ? StaticColor.whiteColor
+                            : StaticColor.hintColor,
                         hoverColor: StaticColor.primaryColor.withOpacity(0.3),
-                        onTap: (){
-                          setState((){
+                        onTap: () {
+                          setState(() {
                             widget.onMenuTap(widget.menuItem[index]);
                             selectedRoute = widget.menuItem[index].route;
                           });
                         },
-                        title: Text(widget.menuItem[index].title,style: TextStyle(fontSize: dynamicSize(.018))),
-                        leading: Icon(widget.menuItem[index].leading,size: dynamicSize(.028 )),
+                        title: Text(widget.menuItem[index].title,
+                            style: TextStyle(fontSize: dynamicSize(.018))),
+                        leading: Icon(widget.menuItem[index].leading,
+                            size: dynamicSize(.028)),
                       ),
                     ),
                   ),
@@ -78,21 +97,18 @@ class _AdminScaffoldState extends State<AdminScaffold> {
               ],
             ),
           ),
-          Expanded(
-            flex: 10,
-            child: widget.body
-          )
+          Expanded(flex: 10, child: widget.body)
         ],
       ),
     );
   }
 }
 
-class ScaffoldMenuItem{
+class ScaffoldMenuItem {
   final String title;
   final String route;
   final IconData leading;
 
-  ScaffoldMenuItem({required this.title, required this.leading, required this.route});
+  ScaffoldMenuItem(
+      {required this.title, required this.leading, required this.route});
 }
-
