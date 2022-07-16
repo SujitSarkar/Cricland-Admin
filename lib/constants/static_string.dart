@@ -9,6 +9,7 @@ class StaticString{
   ///DB Collection Name
   static const String adminCollection = 'admin';
   static const String categoryCollection = 'categories';
+  static const String articleCollection = 'articles';
 
   ///Article
   static const String categories = 'Article Categories';
@@ -23,4 +24,7 @@ class StaticString{
   static const String wrongUserPass = 'Wrong Username or Password';
   static const String success = 'Success';
   static const String emptyField = 'Empty Field';
+  static const String failed = 'Failed';
+  static const String articlePhoto = 'Provide Article Image';
+  static const String articleTitleAndContent = 'Provide Article Image';
 }

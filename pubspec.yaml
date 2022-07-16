@@ -17,6 +17,7 @@ dependencies:
   fluttertoast: ^8.0.9
   line_awesome_flutter: ^2.0.0
   uuid: ^3.0.6
+  file_picker: ^4.6.1
 #  flutter_admin_scaffold: ^1.1.1
 
 dev_dependencies:

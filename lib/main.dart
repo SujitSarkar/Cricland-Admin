@@ -15,10 +15,13 @@ void main() async{
   await GetStorage.init();
   await Firebase.initializeApp(
     options: kIsWeb? const FirebaseOptions(
-      apiKey: "AIzaSyAXH46EheF_v8Sb0mzXB3ye-gwNkLraG7o",
-      appId: "1:788456208019:web:3fe44b77e8b2d5186d3f66",
-      messagingSenderId: "788456208019",
-      projectId: "cricland",
+        apiKey: "AIzaSyAXH46EheF_v8Sb0mzXB3ye-gwNkLraG7o",
+        authDomain: "cricland.firebaseapp.com",
+        projectId: "cricland",
+        storageBucket: "cricland.appspot.com",
+        messagingSenderId: "788456208019",
+        appId: "1:788456208019:web:3fe44b77e8b2d5186d3f66",
+        measurementId: "G-ZP68ED6LGD"
     ):null,
   );
   runApp(const MyApp());

@@ -24,10 +24,50 @@ class WriteArticlePage extends StatelessWidget {
             ///Write Article Section
             Expanded(
               flex: 3,
-              child: Column(
-                children: const [
-                  Text('Write Article Section')
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        InkWell(
+                          onTap: () => controller.pickedImage(),
+                          borderRadius: const BorderRadius.all(Radius.circular(5)),
+                          child: Container(
+                            height: 450,
+                            width: 650,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade300,
+                              borderRadius: const BorderRadius.all(Radius.circular(5)),
+                            ),
+                            child: controller.data !=null
+                                ? Image.memory(controller.data!)
+                                : Image.asset('assets/images/add_photo.png',
+                                height: 450, width: 650),
+                          ),
+                        ),
+                        Positioned(
+                          top: 5.0,
+                          right: 5.0,
+                          child: IconButton(
+                            onPressed: () => controller.pickedImage(),
+                            icon: Icon(Icons.camera_alt_rounded,
+                                color: Theme.of(context).primaryColor,
+                                size: 35,
+                                semanticLabel: 'Add Image'),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: dynamicSize(0.2)),
+                    controller.loading.value
+                        ? const LoadingWidget()
+                        : ElevatedButton(
+                        onPressed: (){
+                          controller.addNewArticleWithImage();
+                        },
+                        child: const Text('Add Article'))
+                  ],
+                ),
               ),
             ),
 
