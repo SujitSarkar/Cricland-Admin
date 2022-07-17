@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cricland_admin/constants/dynamic_size.dart';
 import 'package:cricland_admin/constants/static_string.dart';
+import 'package:cricland_admin/repository/article/model/category_model.dart';
 import 'package:cricland_admin/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,6 +23,9 @@ class ArticleController extends GetxController {
   late TextEditingController title;
   late TextEditingController article;
   var uuId = const Uuid();
+  late Rx<CategoryModel> selectedCategory;
+  late RxList<CategoryModel> categoryList;
+  late ScrollController writeArticleScrollController;
 
   String name = '';
   Uint8List? data;
@@ -37,6 +41,9 @@ class ArticleController extends GetxController {
     category = TextEditingController(text: '');
     title = TextEditingController(text: '');
     article = TextEditingController(text: '');
+    categoryList = <CategoryModel>[].obs;
+    writeArticleScrollController = ScrollController();
+    getCategory();
   }
 
   @override
@@ -53,6 +60,32 @@ class ArticleController extends GetxController {
 
   void cancelAdd() => addArticle(false);
 
+  Future<void> getCategory() async {
+    loading(true);
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection(StaticString.categoryCollection).get();
+      categoryList.clear();
+      for (var element in snapshot.docChanges) {
+        CategoryModel model = CategoryModel(
+          id: element.doc['id'],
+          category: element.doc['category_name']
+        );
+        categoryList.add(model);
+      }
+      categoryList.isNotEmpty
+          ?selectedCategory = categoryList.first.obs
+          :selectedCategory =CategoryModel().obs;
+      loading(false);
+    } on SocketException {
+      loading(false);
+      showToast(StaticString.noInternet);
+    } catch (error) {
+      loading(false);
+      showToast(error.toString());
+    }
+  }
+
   Future<void> addNewCategory() async {
     if (category.text.isNotEmpty && loading.value == false) {
       loading(true);
@@ -65,14 +98,13 @@ class ArticleController extends GetxController {
         if (categories.isEmpty) {
           final String id = uuId.v1();
           await FirebaseFirestore.instance
-              .collection(StaticString.categoryCollection)
-              .doc(id)
-              .set({
+              .collection(StaticString.categoryCollection).doc(id).set({
             'id': id,
             'category_name': category.text,
             'time_stamp': DateTime.now().millisecondsSinceEpoch
           });
           showToast(StaticString.success);
+          await getCategory();
           loading(false);
           category.clear();
         } else {
@@ -100,6 +132,7 @@ class ArticleController extends GetxController {
           .delete();
       showToast(StaticString.success);
       loading(false);
+      await getCategory();
       Navigator.pop(context);
     } on SocketException {
       loading(false);
@@ -149,44 +182,51 @@ class ArticleController extends GetxController {
 
   Future<void> addNewArticleWithImage() async {
     if(data!=null){
-      if(title.text.isNotEmpty && article.text.isNotEmpty){
-        loading(true);
-        try{
-          final String id = uuId.v1();
-          firebase_storage.Reference storageReference = firebase_storage
-              .FirebaseStorage.instance.ref()
-              .child(StaticString.articleCollection).child(id);
-          firebase_storage.UploadTask storageUploadTask =
-          storageReference.putBlob(file);
-          firebase_storage.TaskSnapshot taskSnapshot;
-          await storageUploadTask.then((value) async {
-            taskSnapshot = value;
-            await taskSnapshot.ref.getDownloadURL().then((newImageDownloadUrl) async {
-              final String downloadUrl = newImageDownloadUrl;
-              await FirebaseFirestore.instance
-                  .collection(StaticString.articleCollection).doc(id).set({
-                'id': id,
-                'image_link': downloadUrl,
-                'title': title.text,
-                'article': article.text,
-                'time_stamp': DateTime.now().millisecondsSinceEpoch,
-              }).then((value) async {
+      if(categoryList.isNotEmpty){
+        if(title.text.isNotEmpty && article.text.isNotEmpty){
+          loading(true);
+          try{
+            final String id = uuId.v1();
+            firebase_storage.Reference storageReference = firebase_storage
+                .FirebaseStorage.instance.ref()
+                .child(StaticString.articleCollection).child(id);
+            firebase_storage.UploadTask storageUploadTask =
+            storageReference.putBlob(file);
+            firebase_storage.TaskSnapshot taskSnapshot;
+            await storageUploadTask.then((value) async {
+              taskSnapshot = value;
+              await taskSnapshot.ref.getDownloadURL().then((newImageDownloadUrl)
+              async {
+                final String downloadUrl = newImageDownloadUrl;
+                await FirebaseFirestore.instance
+                    .collection(StaticString.articleCollection).doc(id).set({
+                  'id': id,
+                  'image_link': downloadUrl,
+                  'title': title.text,
+                  'article': article.text,
+                  'category': selectedCategory.value.category,
+                  'time_stamp': DateTime.now().millisecondsSinceEpoch,
+                }).then((value) async {
+                  title.clear();
+                  article.clear();
+                  data=null;
+                  loading(false);
+                  showToast(StaticString.success);
+                });
+              },onError: (error) {
                 loading(false);
-                showToast(StaticString.success);
+                showToast(StaticString.failed);
               });
             },onError: (error) {
               loading(false);
               showToast(StaticString.failed);
             });
-          },onError: (error) {
+          }catch(error){
             loading(false);
-            showToast(StaticString.failed);
-          });
-        }catch(error){
-          loading(false);
-          showToast(error.toString());
-        }
-      }else{showToast(StaticString.articleTitleAndContent);}
+            showToast(error.toString());
+          }
+        }else{showToast(StaticString.articleTitleAndContent);}
+      }else{showToast(StaticString.articleCategory);}
     }else{showToast(StaticString.articlePhoto);}
   }
 }

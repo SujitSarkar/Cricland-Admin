@@ -3,11 +3,15 @@ import 'package:cricland_admin/constants/dynamic_size.dart';
 import 'package:cricland_admin/constants/static_colors.dart';
 import 'package:cricland_admin/constants/static_string.dart';
 import 'package:cricland_admin/repository/article/controller/article_controller.dart';
+import 'package:cricland_admin/repository/article/model/category_model.dart';
 import 'package:cricland_admin/widgets/loading_widget.dart';
 import 'package:cricland_admin/widgets/text_field_widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class WriteArticlePage extends StatelessWidget {
   const WriteArticlePage({Key? key}) : super(key: key);
@@ -18,55 +22,123 @@ class WriteArticlePage extends StatelessWidget {
       init: ArticleController(context: context),
       autoRemove: true,
       builder: (controller) {
-        return Row(
-          mainAxisSize: MainAxisSize.max,
+        return Obx(() => Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ///Write Article Section
             Expanded(
               flex: 3,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Stack(
+              child: RawKeyboardListener(
+                focusNode: FocusNode(),
+                autofocus: true,
+                onKey: (event){
+                  var offset = controller.writeArticleScrollController.offset;
+                  if(event.isKeyPressed(LogicalKeyboardKey.arrowUp)){
+                      if (kReleaseMode) {
+                        controller.writeArticleScrollController.animateTo(offset - 100, duration: Duration(milliseconds: 30), curve: Curves.ease);
+                      } else {
+                        controller.writeArticleScrollController.animateTo(offset - 100, duration: Duration(milliseconds: 30), curve: Curves.ease);
+                      }
+                  }
+                  else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+                      if (kReleaseMode) {
+                        controller.writeArticleScrollController.animateTo(offset + 100, duration: Duration(milliseconds: 30), curve: Curves.ease);
+                      } else {
+                        controller.writeArticleScrollController.animateTo(offset + 100, duration: Duration(milliseconds: 30), curve: Curves.ease);
+                      }
+                  }
+                },
+                child: Scrollbar(
+                  trackVisibility: true,
+                  thumbVisibility: true,
+                  controller: controller.writeArticleScrollController,
+                  child: SingleChildScrollView(
+                    controller: controller.writeArticleScrollController,
+                    padding: EdgeInsets.all(dynamicSize(0.03)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        InkWell(
-                          onTap: () => controller.pickedImage(),
-                          borderRadius: const BorderRadius.all(Radius.circular(5)),
-                          child: Container(
-                            height: 450,
-                            width: 650,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade300,
-                              borderRadius: const BorderRadius.all(Radius.circular(5)),
+                        ///Article Image
+                        Center(
+                          child: InkWell(
+                            onTap: () => controller.pickedImage(),
+                            borderRadius: const BorderRadius.all(Radius.circular(5)),
+                            child: Container(
+                              height: dynamicSize(0.5),
+                              width: dynamicSize(0.7),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade300,
+                                borderRadius: const BorderRadius.all(Radius.circular(5)),
+                              ),
+                              child: controller.data !=null
+                                  ? Image.memory(controller.data!)
+                                  : Image.asset('assets/images/add_photo.png',
+                                  height: 450, width: 650),
                             ),
-                            child: controller.data !=null
-                                ? Image.memory(controller.data!)
-                                : Image.asset('assets/images/add_photo.png',
-                                height: 450, width: 650),
                           ),
                         ),
-                        Positioned(
-                          top: 5.0,
-                          right: 5.0,
-                          child: IconButton(
-                            onPressed: () => controller.pickedImage(),
-                            icon: Icon(Icons.camera_alt_rounded,
-                                color: Theme.of(context).primaryColor,
-                                size: 35,
-                                semanticLabel: 'Add Image'),
+                        SizedBox(height: dynamicSize(0.03)),
+
+                        controller.loading.value
+                            ? const LoadingWidget()
+                            : Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(horizontal: dynamicSize(.02)),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: StaticColor.primaryColor,width: 0.5),
+                                borderRadius: const BorderRadius.all(Radius.circular(5))
+                              ),
+                              child: DropdownButtonHideUnderline(
+                          child: DropdownButton<CategoryModel>(
+                              value: controller.selectedCategory.value,
+                              elevation: 0,
+                              dropdownColor: StaticColor.whiteColor,
+                              onChanged: (newValue) {
+                                controller.selectedCategory(newValue);
+                              },
+                              items: controller.categoryList
+                                  .map<DropdownMenuItem<CategoryModel>>((CategoryModel model) {
+                                return DropdownMenuItem<CategoryModel>(
+                                  value: model,
+                                  child: Text(model.category!),
+                                );
+                              }).toList(),
                           ),
                         ),
+                            ),
+                        SizedBox(height: dynamicSize(0.03)),
+
+                        TextFieldWidget(
+                          controller: controller.title,
+                          labelText: StaticString.articleTitle,
+                        ),
+                        SizedBox(height: dynamicSize(0.03)),
+
+                        TextFieldWidget(
+                          controller: controller.article,
+                          labelText: StaticString.articleContent,
+                          maxLine: 20,
+                          minLine: 20,
+                        ),
+                        SizedBox(height: dynamicSize(0.03)),
+
+                        controller.loading.value
+                            ? const LoadingWidget()
+                            : Center(
+                              child: ElevatedButton(
+                              onPressed: (){
+                                controller.addNewArticleWithImage();
+                              }, child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(StaticString.saveArticle,
+                                style: TextStyle(fontSize: dynamicSize(.02))),
+                        )),
+                            )
                       ],
                     ),
-                    SizedBox(height: dynamicSize(0.2)),
-                    controller.loading.value
-                        ? const LoadingWidget()
-                        : ElevatedButton(
-                        onPressed: (){
-                          controller.addNewArticleWithImage();
-                        },
-                        child: const Text('Add Article'))
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -86,45 +158,29 @@ class WriteArticlePage extends StatelessWidget {
                             fontWeight: FontWeight.bold,fontSize: dynamicSize(.022))),
                     const Divider(),
                     Expanded(
-                      child: StreamBuilder<QuerySnapshot>(
-                          stream: FirebaseFirestore.instance
-                              .collection(StaticString.categoryCollection)
-                              .snapshots(),
-                        builder: (context, snapshot) {
-                            if(snapshot.connectionState==ConnectionState.waiting){
-                              return const LoadingWidget();
-                            }else if(snapshot.hasData){
-                              return ListView.builder(
-                                itemCount: snapshot.data!.docs.length,
-                                itemBuilder:(context, index)=>ListTile(
-                                  contentPadding: const EdgeInsets.all(0.0),
-                                  dense: true,
-                                  title: Text('${snapshot.data!.docs[index]['category_name']}',
-                                      style: TextStyle(fontSize: dynamicSize(.018),
-                                          color: StaticColor.textColor)),
-                                  trailing: IconButton(
-                                    onPressed: (){
-                                      SchedulerBinding.instance.addPostFrameCallback((_) {
-                                        controller.categoryDeleteDialog(snapshot.data!.docs[index]['id']);
-                                      });
-                                    },
-                                    icon: Icon(Icons.delete,color: StaticColor.deleteColor,
-                                        size: dynamicSize(.03)),
-                                  ),
-                                ),
-                              );
-                            }else if(snapshot.data!.docs.isEmpty){
-                              return const Center(child: Text('No Category Added Yet'));
-                            } else{
-                              return const Center(child: Text('No Category Added Yet'));
-                            }
-
-                        }
+                      child: ListView.builder(
+                        itemCount: controller.categoryList.length,
+                        itemBuilder:(context, index)=>ListTile(
+                          contentPadding: const EdgeInsets.all(0.0),
+                          dense: true,
+                          title: Text('${controller.categoryList[index].category}',
+                              style: TextStyle(fontSize: dynamicSize(.018),
+                                  color: StaticColor.textColor)),
+                          trailing: IconButton(
+                            onPressed: (){
+                              SchedulerBinding.instance.addPostFrameCallback((_) {
+                                controller.categoryDeleteDialog(controller.categoryList[index].id!);
+                              });
+                            },
+                            icon: Icon(Icons.delete,color: StaticColor.deleteColor,
+                                size: dynamicSize(.03)),
+                          ),
+                        ),
                       ),
                     ),
 
                     ///Add Category Section
-                    Obx(() => Center(
+                    Center(
                       child:controller.addArticle.value==false
                           ? ElevatedButton(
                           onPressed: ()=>controller.clickToAdd(),
@@ -133,7 +189,7 @@ class WriteArticlePage extends StatelessWidget {
                             child: Text(StaticString.addNew,
                                 style: TextStyle(fontSize: dynamicSize(.02))),
                           ))
-                          ///Add New Category
+                      ///Add New Category
                           :Column(
                         children: [
                           TextFieldWidget(
@@ -147,7 +203,7 @@ class WriteArticlePage extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(primary: StaticColor.deleteColor),
+                                    style: ElevatedButton.styleFrom(primary: StaticColor.deleteColor),
                                     onPressed: ()=>controller.cancelAdd(),
                                     child: const Text(StaticString.cancel)),
                               ),
@@ -161,13 +217,13 @@ class WriteArticlePage extends StatelessWidget {
                           )
                         ],
                       ),
-                    ))
+                    )
                   ],
                 ),
               ),
             )
           ],
-        );
+        ));
       }
     );
   }

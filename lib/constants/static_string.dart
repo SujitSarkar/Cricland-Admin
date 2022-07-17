@@ -17,6 +17,9 @@ class StaticString{
   static const String writeCategory = 'Write Category Name';
   static const String cancel = 'Cancel';
   static const String add = 'Add';
+  static const String saveArticle = 'Save Article';
+  static const String articleTitle = 'Article Title';
+  static const String articleContent = 'Article Content';
 
   ///Toast Message
   static const String noInternet = 'No Internet Connection !';
@@ -26,5 +29,6 @@ class StaticString{
   static const String emptyField = 'Empty Field';
   static const String failed = 'Failed';
   static const String articlePhoto = 'Provide Article Image';
-  static const String articleTitleAndContent = 'Provide Article Image';
+  static const String articleCategory = 'Add Article Category First';
+  static const String articleTitleAndContent = 'Provide Article Title & Content';
 }
