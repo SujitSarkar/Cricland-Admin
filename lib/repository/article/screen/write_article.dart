@@ -19,212 +19,260 @@ class WriteArticlePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ArticleController>(
-      init: ArticleController(context: context),
-      autoRemove: true,
-      builder: (controller) {
-        return Obx(() => Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ///Write Article Section
-            Expanded(
-              flex: 3,
-              child: RawKeyboardListener(
-                focusNode: FocusNode(),
-                autofocus: true,
-                onKey: (event){
-                  var offset = controller.writeArticleScrollController.offset;
-                  if(event.isKeyPressed(LogicalKeyboardKey.arrowUp)){
-                      if (kReleaseMode) {
-                        controller.writeArticleScrollController.animateTo(offset - 100, duration: Duration(milliseconds: 30), curve: Curves.ease);
-                      } else {
-                        controller.writeArticleScrollController.animateTo(offset - 100, duration: Duration(milliseconds: 30), curve: Curves.ease);
-                      }
-                  }
-                  else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-                      if (kReleaseMode) {
-                        controller.writeArticleScrollController.animateTo(offset + 100, duration: Duration(milliseconds: 30), curve: Curves.ease);
-                      } else {
-                        controller.writeArticleScrollController.animateTo(offset + 100, duration: Duration(milliseconds: 30), curve: Curves.ease);
-                      }
-                  }
-                },
-                child: Scrollbar(
-                  trackVisibility: true,
-                  thumbVisibility: true,
-                  controller: controller.writeArticleScrollController,
-                  child: SingleChildScrollView(
-                    controller: controller.writeArticleScrollController,
-                    padding: EdgeInsets.all(dynamicSize(0.03)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ///Article Image
-                        Center(
-                          child: InkWell(
-                            onTap: () => controller.pickedImage(),
-                            borderRadius: const BorderRadius.all(Radius.circular(5)),
-                            child: Container(
-                              height: dynamicSize(0.5),
-                              width: dynamicSize(0.7),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                borderRadius: const BorderRadius.all(Radius.circular(5)),
+        init: ArticleController(context: context),
+        autoRemove: true,
+        builder: (controller) {
+          return Obx(() => Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ///Write Article Section
+                  Expanded(
+                    flex: 3,
+                    child: RawKeyboardListener(
+                      focusNode: FocusNode(),
+                      autofocus: true,
+                      onKey: (event) {
+                        var offset =
+                            controller.writeArticleScrollController.offset;
+                        if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+                          if (kReleaseMode) {
+                            controller.writeArticleScrollController.animateTo(
+                                offset - 100,
+                                duration: const Duration(milliseconds: 30),
+                                curve: Curves.ease);
+                          } else {
+                            controller.writeArticleScrollController.animateTo(
+                                offset - 100,
+                                duration: const Duration(milliseconds: 30),
+                                curve: Curves.ease);
+                          }
+                        } else if (event.logicalKey ==
+                            LogicalKeyboardKey.arrowDown) {
+                          if (kReleaseMode) {
+                            controller.writeArticleScrollController.animateTo(
+                                offset + 100,
+                                duration: const Duration(milliseconds: 30),
+                                curve: Curves.ease);
+                          } else {
+                            controller.writeArticleScrollController.animateTo(
+                                offset + 100,
+                                duration: const Duration(milliseconds: 30),
+                                curve: Curves.ease);
+                          }
+                        }
+                      },
+                      child: Scrollbar(
+                        trackVisibility: true,
+                        thumbVisibility: true,
+                        controller: controller.writeArticleScrollController,
+                        child: SingleChildScrollView(
+                          controller: controller.writeArticleScrollController,
+                          padding: EdgeInsets.all(dynamicSize(0.03)),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ///Article Image
+                              Center(
+                                child: InkWell(
+                                  onTap: () => controller.pickedImage(),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(5)),
+                                  child: Container(
+                                    height: dynamicSize(0.5),
+                                    width: dynamicSize(0.7),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade300,
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(5)),
+                                    ),
+                                    child: controller.data != null
+                                        ? Image.memory(controller.data!)
+                                        : Image.asset(
+                                            'assets/images/add_photo.png',
+                                            height: 450,
+                                            width: 650),
+                                  ),
+                                ),
                               ),
-                              child: controller.data !=null
-                                  ? Image.memory(controller.data!)
-                                  : Image.asset('assets/images/add_photo.png',
-                                  height: 450, width: 650),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: dynamicSize(0.03)),
+                              SizedBox(height: dynamicSize(0.03)),
 
-                        controller.loading.value
-                            ? const LoadingWidget()
-                            : Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.symmetric(horizontal: dynamicSize(.02)),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: StaticColor.primaryColor,width: 0.5),
-                                borderRadius: const BorderRadius.all(Radius.circular(5))
+                              controller.loading.value
+                                  ? const LoadingWidget()
+                                  : Container(
+                                      width: double.infinity,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: dynamicSize(.02)),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: StaticColor.primaryColor,
+                                              width: 0.5),
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(5))),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<CategoryModel>(
+                                          value:
+                                              controller.selectedCategory.value,
+                                          elevation: 0,
+                                          dropdownColor: StaticColor.whiteColor,
+                                          onChanged: (newValue) {
+                                            controller
+                                                .selectedCategory(newValue);
+                                          },
+                                          items: controller.categoryList.map<
+                                                  DropdownMenuItem<
+                                                      CategoryModel>>(
+                                              (CategoryModel model) {
+                                            return DropdownMenuItem<
+                                                CategoryModel>(
+                                              value: model,
+                                              child: Text(model.category!),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
+                                    ),
+                              SizedBox(height: dynamicSize(0.03)),
+
+                              TextFieldWidget(
+                                controller: controller.title,
+                                labelText: StaticString.articleTitle,
                               ),
-                              child: DropdownButtonHideUnderline(
-                          child: DropdownButton<CategoryModel>(
-                              value: controller.selectedCategory.value,
-                              elevation: 0,
-                              dropdownColor: StaticColor.whiteColor,
-                              onChanged: (newValue) {
-                                controller.selectedCategory(newValue);
-                              },
-                              items: controller.categoryList
-                                  .map<DropdownMenuItem<CategoryModel>>((CategoryModel model) {
-                                return DropdownMenuItem<CategoryModel>(
-                                  value: model,
-                                  child: Text(model.category!),
-                                );
-                              }).toList(),
-                          ),
-                        ),
-                            ),
-                        SizedBox(height: dynamicSize(0.03)),
+                              SizedBox(height: dynamicSize(0.03)),
 
-                        TextFieldWidget(
-                          controller: controller.title,
-                          labelText: StaticString.articleTitle,
-                        ),
-                        SizedBox(height: dynamicSize(0.03)),
+                              TextFieldWidget(
+                                controller: controller.article,
+                                labelText: StaticString.articleContent,
+                                maxLine: 20,
+                                minLine: 20,
+                              ),
+                              SizedBox(height: dynamicSize(0.03)),
 
-                        TextFieldWidget(
-                          controller: controller.article,
-                          labelText: StaticString.articleContent,
-                          maxLine: 20,
-                          minLine: 20,
-                        ),
-                        SizedBox(height: dynamicSize(0.03)),
-
-                        controller.loading.value
-                            ? const LoadingWidget()
-                            : Center(
-                              child: ElevatedButton(
-                              onPressed: (){
-                                controller.addNewArticleWithImage();
-                              }, child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(StaticString.saveArticle,
-                                style: TextStyle(fontSize: dynamicSize(.02))),
-                        )),
-                            )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            ///Category Section
-            Expanded(
-              flex: 1,
-              child: Container(
-                color: StaticColor.sideBarColor,
-                padding: EdgeInsets.symmetric(horizontal: dynamicSize(0.02),vertical: dynamicSize(0.02)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('${StaticString.categories}:',
-                        style: TextStyle(
-                            color: StaticColor.textColor,
-                            fontWeight: FontWeight.bold,fontSize: dynamicSize(.022))),
-                    const Divider(),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: controller.categoryList.length,
-                        itemBuilder:(context, index)=>ListTile(
-                          contentPadding: const EdgeInsets.all(0.0),
-                          dense: true,
-                          title: Text('${controller.categoryList[index].category}',
-                              style: TextStyle(fontSize: dynamicSize(.018),
-                                  color: StaticColor.textColor)),
-                          trailing: IconButton(
-                            onPressed: (){
-                              SchedulerBinding.instance.addPostFrameCallback((_) {
-                                controller.categoryDeleteDialog(controller.categoryList[index].id!);
-                              });
-                            },
-                            icon: Icon(Icons.delete,color: StaticColor.deleteColor,
-                                size: dynamicSize(.03)),
+                              controller.loading.value
+                                  ? const LoadingWidget()
+                                  : Center(
+                                      child: ElevatedButton(
+                                          onPressed: () {
+                                            controller.addNewArticleWithImage();
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                                StaticString.saveArticle,
+                                                style: TextStyle(
+                                                    fontSize:
+                                                        dynamicSize(.02))),
+                                          )),
+                                    )
+                            ],
                           ),
                         ),
                       ),
                     ),
+                  ),
 
-                    ///Add Category Section
-                    Center(
-                      child:controller.addArticle.value==false
-                          ? ElevatedButton(
-                          onPressed: ()=>controller.clickToAdd(),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(StaticString.addNew,
-                                style: TextStyle(fontSize: dynamicSize(.02))),
-                          ))
-                      ///Add New Category
-                          :Column(
+                  ///Category Section
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      color: StaticColor.sideBarColor,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: dynamicSize(0.02),
+                          vertical: dynamicSize(0.02)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TextFieldWidget(
-                            controller: controller.category,
-                            labelText: StaticString.writeCategory,
-                          ),
-                          SizedBox(height: dynamicSize(.022)),
-                          controller.loading.value
-                              ? const LoadingWidget()
-                              : Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(primary: StaticColor.deleteColor),
-                                    onPressed: ()=>controller.cancelAdd(),
-                                    child: const Text(StaticString.cancel)),
+                          Text('${StaticString.categories}:',
+                              style: TextStyle(
+                                  color: StaticColor.textColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: dynamicSize(.022))),
+                          const Divider(),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: controller.categoryList.length,
+                              itemBuilder: (context, index) => ListTile(
+                                contentPadding: const EdgeInsets.all(0.0),
+                                dense: true,
+                                title: Text(
+                                    '${controller.categoryList[index].category}',
+                                    style: TextStyle(
+                                        fontSize: dynamicSize(.018),
+                                        color: StaticColor.textColor)),
+                                trailing: IconButton(
+                                  onPressed: () {
+                                    SchedulerBinding.instance
+                                        .addPostFrameCallback((_) {
+                                      controller.categoryDeleteDialog(
+                                          controller.categoryList[index].id!);
+                                    });
+                                  },
+                                  icon: Icon(Icons.delete,
+                                      color: StaticColor.deleteColor,
+                                      size: dynamicSize(.03)),
+                                ),
                               ),
-                              SizedBox(width: dynamicSize(.022)),
-                              Expanded(
-                                child: ElevatedButton(
-                                    onPressed: ()=>controller.addNewCategory(),
-                                    child: const Text(StaticString.add)),
-                              )
-                            ],
+                            ),
+                          ),
+
+                          ///Add Category Section
+                          Center(
+                            child: controller.addArticle.value == false
+                                ? ElevatedButton(
+                                    onPressed: () => controller.clickToAdd(),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(StaticString.addNew,
+                                          style: TextStyle(
+                                              fontSize: dynamicSize(.02))),
+                                    ))
+
+                                ///Add New Category
+                                : Column(
+                                    children: [
+                                      TextFieldWidget(
+                                        controller: controller.category,
+                                        labelText: StaticString.writeCategory,
+                                      ),
+                                      SizedBox(height: dynamicSize(.022)),
+                                      controller.loading.value
+                                          ? const LoadingWidget()
+                                          : Row(
+                                              children: [
+                                                Expanded(
+                                                  child: ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                              primary: StaticColor
+                                                                  .deleteColor),
+                                                      onPressed: () =>
+                                                          controller
+                                                              .cancelAdd(),
+                                                      child: const Text(
+                                                          StaticString.cancel)),
+                                                ),
+                                                SizedBox(
+                                                    width: dynamicSize(.022)),
+                                                Expanded(
+                                                  child: ElevatedButton(
+                                                      onPressed: () =>
+                                                          controller
+                                                              .addNewCategory(),
+                                                      child: const Text(
+                                                          StaticString.add)),
+                                                )
+                                              ],
+                                            )
+                                    ],
+                                  ),
                           )
                         ],
                       ),
-                    )
-                  ],
-                ),
-              ),
-            )
-          ],
-        ));
-      }
-    );
+                    ),
+                  )
+                ],
+              ));
+        });
   }
 }

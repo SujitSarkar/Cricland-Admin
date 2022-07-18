@@ -10,7 +10,7 @@ class StaticColor {
   static const Color whiteColor = Colors.white;
   static final Color hintColor = Colors.grey.shade600;
   static final Color sideBarColor = Colors.blueGrey.shade100;
-  static final Color hoverColor = Colors.blueGrey.shade100;
+  static final Color hoverColor = Colors.blueGrey.shade50;
   static final Color deleteColor = Colors.red.shade700;
 
   static const Map<int, Color> primaryColorMap = {

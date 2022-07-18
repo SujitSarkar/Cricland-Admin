@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cricland_admin/constants/dynamic_size.dart';
 import 'package:cricland_admin/constants/static_string.dart';
+import 'package:cricland_admin/repository/article/model/article_model.dart';
 import 'package:cricland_admin/repository/article/model/category_model.dart';
 import 'package:cricland_admin/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,6 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class ArticleController extends GetxController {
   ArticleController({required this.context});
-
   BuildContext context;
 
   late RxBool loading;
@@ -22,10 +22,13 @@ class ArticleController extends GetxController {
   late TextEditingController category;
   late TextEditingController title;
   late TextEditingController article;
+  late TextEditingController articleSearchKey;
   var uuId = const Uuid();
   late Rx<CategoryModel> selectedCategory;
   late RxList<CategoryModel> categoryList;
+  late RxList<ArticleModel> articleList;
   late ScrollController writeArticleScrollController;
+  late ScrollController articleListScrollController;
 
   String name = '';
   Uint8List? data;
@@ -35,15 +38,23 @@ class ArticleController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
     loading = false.obs;
     addArticle = false.obs;
     category = TextEditingController(text: '');
     title = TextEditingController(text: '');
     article = TextEditingController(text: '');
+    articleSearchKey = TextEditingController(text: '');
     categoryList = <CategoryModel>[].obs;
+    articleList = <ArticleModel>[].obs;
     writeArticleScrollController = ScrollController();
-    getCategory();
+    articleListScrollController = ScrollController();
+
+    fetchInitialData();
+  }
+
+  Future<void> fetchInitialData()async{
+    await getCategory();
+    await getArticle();
   }
 
   @override
@@ -54,6 +65,7 @@ class ArticleController extends GetxController {
     category.dispose();
     title.dispose();
     article.dispose();
+    articleSearchKey.dispose();
   }
 
   void clickToAdd() => addArticle(true);
@@ -76,6 +88,43 @@ class ArticleController extends GetxController {
       categoryList.isNotEmpty
           ?selectedCategory = categoryList.first.obs
           :selectedCategory =CategoryModel().obs;
+      loading(false);
+    } on SocketException {
+      loading(false);
+      showToast(StaticString.noInternet);
+    } catch (error) {
+      loading(false);
+      showToast(error.toString());
+    }
+  }
+
+  Future<void> getArticle() async {
+    loading(true);
+    try {
+      QuerySnapshot snapshot;
+      if(articleList.isEmpty){
+        snapshot = await FirebaseFirestore.instance
+            .collection(StaticString.articleCollection).orderBy('time_stamp',
+            descending: true).limit(30).get();
+      }else{
+        snapshot = await FirebaseFirestore.instance
+            .collection(StaticString.articleCollection).where('time_stamp',
+            isGreaterThan: articleList.last.timeStamp).orderBy('time_stamp',
+            descending: true).limit(10).get();
+      }
+      
+      for (var element in snapshot.docChanges) {
+        ArticleModel model = ArticleModel(
+          id: element.doc['id'],
+          title: element.doc['title'],
+          category: element.doc['category'],
+          article: element.doc['article'],
+          imageLink: element.doc['image_link'],
+          timeStamp: element.doc['time_stamp'],
+        );
+        articleList.add(model);
+      }
+      print('Article Total: ${articleList.length}');
       loading(false);
     } on SocketException {
       loading(false);

@@ -37,6 +37,8 @@ class _AdminScaffoldState extends State<AdminScaffold> {
     return Scaffold(
       body: Row(
         mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             flex: 2,

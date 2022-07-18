@@ -20,6 +20,7 @@ class StaticString{
   static const String saveArticle = 'Save Article';
   static const String articleTitle = 'Article Title';
   static const String articleContent = 'Article Content';
+  static const String searchArticle = 'Search Article';
 
   ///Toast Message
   static const String noInternet = 'No Internet Connection !';
