@@ -1,5 +1,6 @@
 import 'package:cricland_admin/constants/routes.dart';
 import 'package:cricland_admin/repository/article/screen/article_list.dart';
+import 'package:cricland_admin/repository/article/screen/update_article.dart';
 import 'package:cricland_admin/repository/article/screen/write_article.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,6 +21,9 @@ class HomeController extends GetxController{
       update();
       break;
       case Routes.writeArticle: homeWidget=const WriteArticlePage();
+      update();
+      break;
+      case Routes.updateArticle: homeWidget=const UpdateArticlePage();
       update();
       break;
       default: homeWidget=const WriteArticlePage();

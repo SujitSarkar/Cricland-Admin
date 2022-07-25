@@ -4,7 +4,9 @@ import 'package:cricland_admin/constants/dynamic_size.dart';
 import 'package:cricland_admin/constants/routes.dart';
 import 'package:cricland_admin/constants/static_string.dart';
 import 'package:cricland_admin/repository/home/controller/home_controller.dart';
+import 'package:cricland_admin/repository/home/screen/home_screen.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController{
@@ -70,7 +72,10 @@ class LoginController extends GetxController{
         if(user.isNotEmpty && user.first.get('password')
             ==HomeController.instance.getString('password')){
           loading(false);
-          Navigator.pushReplacementNamed(context, Routes.home);
+          //Navigator.pushReplacementNamed(context, Routes.home);
+          // ignore: use_build_context_synchronously
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+              const HomeScreen()), (Route<dynamic> route) => false);
         }else{
           loading(false);
           showToast(StaticString.wrongUserPass);

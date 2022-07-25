@@ -1,13 +1,16 @@
 import 'package:cricland_admin/constants/routes.dart';
 import 'package:cricland_admin/constants/static_string.dart';
 import 'package:cricland_admin/constants/static_variavles.dart';
+import 'package:cricland_admin/repository/article/controller/article_controller.dart';
 import 'package:cricland_admin/repository/article/screen/article_list.dart';
+import 'package:cricland_admin/repository/article/screen/update_article.dart';
 import 'package:cricland_admin/repository/article/screen/write_article.dart';
 import 'package:cricland_admin/repository/home/screen/home_screen.dart';
 import 'package:cricland_admin/repository/login/screen/login_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 void main() async{
@@ -31,6 +34,7 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    Get.put(ArticleController(context: context));
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: StaticString.appName,
@@ -41,6 +45,7 @@ class MyApp extends StatelessWidget {
         Routes.home: (context) => const HomeScreen(),
         Routes.articleList: (context) => const ArticleListPage(),
         Routes.writeArticle: (context) => const WriteArticlePage(),
+        Routes.updateArticle: (context) => const UpdateArticlePage(),
       },
     );
   }

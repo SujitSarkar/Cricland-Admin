@@ -111,7 +111,7 @@ class WriteArticlePage extends StatelessWidget {
                                           borderRadius: const BorderRadius.all(
                                               Radius.circular(5))),
                                       child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<CategoryModel>(
+                                        child: DropdownButton<String>(
                                           value:
                                               controller.selectedCategory.value,
                                           elevation: 0,
@@ -122,12 +122,12 @@ class WriteArticlePage extends StatelessWidget {
                                           },
                                           items: controller.categoryList.map<
                                                   DropdownMenuItem<
-                                                      CategoryModel>>(
-                                              (CategoryModel model) {
+                                                      String>>(
+                                              (String value) {
                                             return DropdownMenuItem<
-                                                CategoryModel>(
-                                              value: model,
-                                              child: Text(model.category!),
+                                                String>(
+                                              value: value,
+                                              child: Text(value),
                                             );
                                           }).toList(),
                                         ),
@@ -196,7 +196,7 @@ class WriteArticlePage extends StatelessWidget {
                                 contentPadding: const EdgeInsets.all(0.0),
                                 dense: true,
                                 title: Text(
-                                    '${controller.categoryList[index].category}',
+                                    controller.categoryList[index],
                                     style: TextStyle(
                                         fontSize: dynamicSize(.018),
                                         color: StaticColor.textColor)),
@@ -205,7 +205,7 @@ class WriteArticlePage extends StatelessWidget {
                                     SchedulerBinding.instance
                                         .addPostFrameCallback((_) {
                                       controller.categoryDeleteDialog(
-                                          controller.categoryList[index].id!);
+                                          controller.categoryList[index]);
                                     });
                                   },
                                   icon: Icon(Icons.delete,

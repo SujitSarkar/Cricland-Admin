@@ -18,6 +18,8 @@ class StaticString{
   static const String cancel = 'Cancel';
   static const String add = 'Add';
   static const String saveArticle = 'Save Article';
+  static const String update = 'Update';
+  static const String delete = 'Delete';
   static const String articleTitle = 'Article Title';
   static const String articleContent = 'Article Content';
   static const String searchArticle = 'Search Article';

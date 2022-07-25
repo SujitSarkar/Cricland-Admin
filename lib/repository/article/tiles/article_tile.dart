@@ -1,6 +1,9 @@
 import 'package:cricland_admin/constants/dynamic_size.dart';
+import 'package:cricland_admin/constants/routes.dart';
 import 'package:cricland_admin/constants/static_colors.dart';
+import 'package:cricland_admin/repository/article/controller/article_controller.dart';
 import 'package:cricland_admin/repository/article/model/article_model.dart';
+import 'package:cricland_admin/repository/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:image_network/image_network.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -15,10 +18,17 @@ class ArticleTile extends StatelessWidget {
       color: StaticColor.whiteColor,
       borderRadius: const BorderRadius.all(Radius.circular(5)),
       child: InkWell(
-        onTap: (){},
+        onTap: (){
+          ArticleController.ac.updateArticleModel = articleModel;
+          ArticleController.ac.selectedCategory.value = articleModel.category!;
+          ArticleController.ac.title.text = articleModel.title!;
+          ArticleController.ac.article.text = articleModel.article!;
+          HomeController.instance.changeCurrentScreen(Routes.updateArticle);
+        },
         hoverColor: StaticColor.hoverColor,
         borderRadius: const BorderRadius.all(Radius.circular(5)),
-        child: Padding(
+        child: Container(
+          //margin: EdgeInsets.only(bottom: dynamicSize(.02)),
           padding: const EdgeInsets.only(top:8.0,right: 20, bottom: 8.0, left: 8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
