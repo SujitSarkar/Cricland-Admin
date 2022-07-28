@@ -11,6 +11,7 @@ import 'package:cricland_admin/widgets/loading_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:html' as html;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -34,6 +35,7 @@ class ArticleController extends GetxController {
   late RxList<ArticleModel> articleList;
   late ScrollController writeArticleScrollController;
   late ScrollController articleListScrollController;
+
 
   ArticleModel updateArticleModel = ArticleModel();
 
@@ -110,14 +112,14 @@ class ArticleController extends GetxController {
         snapshot = await FirebaseFirestore.instance
             .collection(StaticString.articleCollection)
             .orderBy('time_stamp', descending: true)
-            .limit(30)
+            .limit(5)
             .get();
       } else {
         snapshot = await FirebaseFirestore.instance
             .collection(StaticString.articleCollection)
             .where('time_stamp', isGreaterThan: articleList.last.timeStamp)
             .orderBy('time_stamp', descending: true)
-            .limit(10)
+            .limit(5)
             .get();
       }
 
@@ -419,6 +421,7 @@ class ArticleController extends GetxController {
           .delete();
       showToast(StaticString.success);
       loading(false);
+      articleList.clear();
       await getArticle();
       // ignore: use_build_context_synchronously
       Navigator.pop(context);

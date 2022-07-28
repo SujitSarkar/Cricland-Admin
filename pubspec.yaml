@@ -21,6 +21,7 @@ dependencies:
   image_network: ^2.5.1
   cached_network_image: ^3.2.1
 #  flutter_admin_scaffold: ^1.1.1
+  pull_to_refresh: ^2.0.0
 
 dev_dependencies:
   flutter_test:

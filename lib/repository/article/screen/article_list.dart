@@ -5,13 +5,21 @@ import 'package:cricland_admin/repository/article/controller/article_controller.
 import 'package:cricland_admin/repository/article/tiles/article_tile.dart';
 import 'package:cricland_admin/widgets/loading_widget.dart';
 import 'package:cricland_admin/widgets/text_field_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class ArticleListPage extends StatelessWidget {
+class ArticleListPage extends StatefulWidget {
   const ArticleListPage({Key? key}) : super(key: key);
+
+  @override
+  State<ArticleListPage> createState() => _ArticleListPageState();
+}
+
+class _ArticleListPageState extends State<ArticleListPage> {
 
   @override
   Widget build(BuildContext context) {
