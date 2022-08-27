@@ -16,7 +16,7 @@ class TextFieldWidget extends StatefulWidget {
     this.suffixIcon,
     this.maxLine,
     this.minLine,
-    this.suffixOnTap}) : super(key: key);
+    this.suffixOnTap,this.prefixOnTap}) : super(key: key);
 
   final TextEditingController controller;
   final String? labelText;
@@ -30,6 +30,7 @@ class TextFieldWidget extends StatefulWidget {
   final int? minLine;
   final Function()? onTap;
   final Function()? suffixOnTap;
+  final Function()? prefixOnTap;
 
   @override
   State<TextFieldWidget> createState() => _TextFieldWidgetState();
@@ -86,9 +87,13 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
               fontFamily: 'openSans',
               fontWeight: FontWeight.w400
           ),
-          prefixIcon: widget.prefixIcon!=null?Padding(
-            padding: const EdgeInsets.only(right: 8,left: 8),
-            child: Icon(widget.prefixIcon,size: dynamicSize(.06)),
+          prefixIcon: widget.prefixIcon!=null?InkWell(
+            onTap: widget.prefixOnTap,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8,left: 8),
+              child: Icon(widget.prefixIcon,size: dynamicSize(0.03),
+                  color: Colors.grey.shade600),
+            ),
           ):null,
           suffixIconConstraints: BoxConstraints.loose(size),
           prefixIconConstraints: BoxConstraints.loose(size),

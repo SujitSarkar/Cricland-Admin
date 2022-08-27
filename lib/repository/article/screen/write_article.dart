@@ -135,12 +135,14 @@ class WriteArticlePage extends StatelessWidget {
                                     ),
                               SizedBox(height: dynamicSize(0.03)),
 
+                              ///Title
                               TextFieldWidget(
                                 controller: controller.title,
                                 labelText: StaticString.articleTitle,
                               ),
                               SizedBox(height: dynamicSize(0.03)),
 
+                              ///Description
                               TextFieldWidget(
                                 controller: controller.article,
                                 labelText: StaticString.articleContent,
@@ -149,12 +151,20 @@ class WriteArticlePage extends StatelessWidget {
                               ),
                               SizedBox(height: dynamicSize(0.03)),
 
+                              TextFieldWidget(
+                                controller: controller.youtubeVideoLink,
+                                labelText: StaticString.youtubeVideoLink,
+                                maxLine: 3,
+                                minLine: 3,
+                              ),
+                              SizedBox(height: dynamicSize(0.03)),
+
                               controller.loading.value
                                   ? const LoadingWidget()
                                   : Center(
                                       child: ElevatedButton(
-                                          onPressed: () {
-                                            controller.addNewArticleWithImage();
+                                          onPressed: () async{
+                                            await controller.addNewArticleWithImage();
                                           },
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),

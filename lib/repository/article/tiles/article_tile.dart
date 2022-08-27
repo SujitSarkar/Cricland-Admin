@@ -7,6 +7,7 @@ import 'package:cricland_admin/repository/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:image_network/image_network.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class ArticleTile extends StatelessWidget {
   const ArticleTile({Key? key, required this.articleModel}) : super(key: key);
@@ -23,6 +24,7 @@ class ArticleTile extends StatelessWidget {
           ArticleController.ac.selectedCategory.value = articleModel.category!;
           ArticleController.ac.title.text = articleModel.title!;
           ArticleController.ac.article.text = articleModel.article!;
+          ArticleController.ac.youtubeVideoLink.text = articleModel.youtubeVideoLink!;
           HomeController.instance.changeCurrentScreen(Routes.updateArticle);
         },
         hoverColor: StaticColor.hoverColor,

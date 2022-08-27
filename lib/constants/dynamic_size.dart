@@ -9,7 +9,7 @@ final double getWidth =Get.size.width;
 
 void showToast(String mgs)=>Fluttertoast.showToast(
     msg: mgs,
-    toastLength: Toast.LENGTH_SHORT,
+    toastLength: Toast.LENGTH_LONG,
     gravity: ToastGravity.CENTER,
     timeInSecForIosWeb: 1,
     backgroundColor: Colors.black87,

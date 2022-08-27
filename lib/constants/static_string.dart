@@ -22,6 +22,7 @@ class StaticString{
   static const String delete = 'Delete';
   static const String articleTitle = 'Article Title';
   static const String articleContent = 'Article Content';
+  static const String youtubeVideoLink = 'Youtube Video Link';
   static const String searchArticle = 'Search Article';
 
   ///Toast Message

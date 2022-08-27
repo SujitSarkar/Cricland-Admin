@@ -10,9 +10,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_network/image_network.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
-class UpdateArticlePage extends StatelessWidget {
+class UpdateArticlePage extends StatefulWidget {
   const UpdateArticlePage({Key? key}) : super(key: key);
+
+  @override
+  State<UpdateArticlePage> createState() => _UpdateArticlePageState();
+}
+
+class _UpdateArticlePageState extends State<UpdateArticlePage> {
+  late YoutubePlayerController youtubePlayerController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    youtubePlayerController = YoutubePlayerController(
+      params: const YoutubePlayerParams(
+        startAt: Duration(seconds: 30),
+          showFullscreenButton: true,
+          autoPlay: false,
+        mute: true
+      ),
+    );
+    youtubePlayerController = YoutubePlayerController()..onInit = (){
+      youtubePlayerController.loadVideo(ArticleController.ac.youtubeVideoLink.text);
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -171,6 +196,24 @@ class UpdateArticlePage extends StatelessWidget {
                       labelText: StaticString.articleContent,
                       maxLine: 20,
                       minLine: 20,
+                    ),
+                    SizedBox(height: dynamicSize(0.03)),
+
+                    TextFieldWidget(
+                      controller: controller.youtubeVideoLink,
+                      labelText: StaticString.youtubeVideoLink,
+                      maxLine: 1,
+                      minLine: 1,
+                    ),
+                    SizedBox(height: dynamicSize(0.03)),
+
+                    if(controller.youtubeVideoLink.text.isNotEmpty)
+                    AspectRatio(
+                      aspectRatio: 2.5,
+                      child: YoutubePlayer(
+                        controller: youtubePlayerController,
+                        //aspectRatio: 16/9,
+                      ),
                     ),
                     SizedBox(height: dynamicSize(0.03)),
 

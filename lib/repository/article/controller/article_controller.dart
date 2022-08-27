@@ -11,7 +11,6 @@ import 'package:cricland_admin/widgets/loading_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:html' as html;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -28,6 +27,8 @@ class ArticleController extends GetxController {
   late TextEditingController category;
   late TextEditingController title;
   late TextEditingController article;
+  late TextEditingController youtubeVideoLink;
+
   late TextEditingController articleSearchKey;
   var uuId = const Uuid();
   late Rx<String> selectedCategory;
@@ -52,6 +53,7 @@ class ArticleController extends GetxController {
     category = TextEditingController(text: '');
     title = TextEditingController(text: '');
     article = TextEditingController(text: '');
+    youtubeVideoLink = TextEditingController(text: '');
     articleSearchKey = TextEditingController(text: '');
     categoryList = <String>[].obs;
     articleList = <ArticleModel>[].obs;
@@ -74,6 +76,7 @@ class ArticleController extends GetxController {
     category.dispose();
     title.dispose();
     article.dispose();
+    youtubeVideoLink.dispose();
     articleSearchKey.dispose();
   }
 
@@ -107,22 +110,11 @@ class ArticleController extends GetxController {
   Future<void> getArticle() async {
     loading(true);
     try {
-      QuerySnapshot snapshot;
-      if (articleList.isEmpty) {
-        snapshot = await FirebaseFirestore.instance
-            .collection(StaticString.articleCollection)
-            .orderBy('time_stamp', descending: true)
-            .limit(5)
-            .get();
-      } else {
-        snapshot = await FirebaseFirestore.instance
-            .collection(StaticString.articleCollection)
-            .where('time_stamp', isGreaterThan: articleList.last.timeStamp)
-            .orderBy('time_stamp', descending: true)
-            .limit(5)
-            .get();
-      }
-
+      QuerySnapshot  snapshot = await FirebaseFirestore.instance
+          .collection(StaticString.articleCollection)
+          .where('category',isEqualTo: selectedCategory.value)
+          .orderBy('time_stamp', descending: true).get();
+      articleList.clear();
       for (var element in snapshot.docChanges) {
         ArticleModel model = ArticleModel(
           id: element.doc['id'],
@@ -130,6 +122,7 @@ class ArticleController extends GetxController {
           category: element.doc['category'],
           article: element.doc['article'],
           imageLink: element.doc['image_link'],
+          youtubeVideoLink: element.doc['youtube_video_link'],
           timeStamp: element.doc['time_stamp'],
         );
         articleList.add(model);
@@ -143,6 +136,48 @@ class ArticleController extends GetxController {
       showToast(StaticString.noInternet);
     } catch (error) {
       loading(false);
+      showToast(error.toString());
+    }
+  }
+
+  Future<void> searchArticle() async {
+    loading(true);
+    try {
+      QuerySnapshot?  snapshot;
+      if(articleSearchKey.text.isEmpty){
+        snapshot = await FirebaseFirestore.instance.collection(StaticString.articleCollection)
+        .where('category',isEqualTo: selectedCategory.value)
+        .get();
+      }else{
+        snapshot = await FirebaseFirestore.instance.collection(StaticString.articleCollection)
+            .where('category',isEqualTo: selectedCategory.value)
+            .where('title'.toLowerCase(),isLessThanOrEqualTo: articleSearchKey.text.toLowerCase())
+            .get();
+      }
+
+      articleList.clear();
+      for (var element in snapshot.docChanges) {
+        ArticleModel model = ArticleModel(
+          id: element.doc['id'],
+          title: element.doc['title'],
+          category: element.doc['category'],
+          article: element.doc['article'],
+          imageLink: element.doc['image_link'],
+          youtubeVideoLink: element.doc['youtube_video_link'],
+          timeStamp: element.doc['time_stamp'],
+        );
+        articleList.add(model);
+      }
+      if (kDebugMode) {
+        print('Article Total: ${articleList.length}');
+      }
+      loading(false);
+    } on SocketException {
+      loading(false);
+      showToast(StaticString.noInternet);
+    } catch (error) {
+      loading(false);
+      print(error.toString());
       showToast(error.toString());
     }
   }
@@ -285,6 +320,7 @@ class ArticleController extends GetxController {
                   'title': title.text,
                   'article': article.text,
                   'category': selectedCategory.value,
+                  'youtube_video_link': youtubeVideoLink.text,
                   'time_stamp': DateTime.now().millisecondsSinceEpoch,
                 }).then((value) async {
                   title.clear();
@@ -342,6 +378,7 @@ class ArticleController extends GetxController {
                 'title': title.text,
                 'article': article.text,
                 'category': selectedCategory.value,
+                'youtube_video_link': youtubeVideoLink.text,
                 'time_stamp': DateTime.now().millisecondsSinceEpoch,
               }).then((value) async {
                 title.clear();
@@ -377,6 +414,7 @@ class ArticleController extends GetxController {
           'title': title.text,
           'article': article.text,
           'category': selectedCategory.value,
+          'youtube_video_link': youtubeVideoLink.text,
           'time_stamp': DateTime.now().millisecondsSinceEpoch,
         }).then((value) async {
           title.clear();

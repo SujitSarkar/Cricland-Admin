@@ -5,16 +5,13 @@ import 'package:cricland_admin/repository/article/controller/article_controller.
 import 'package:cricland_admin/repository/article/tiles/article_tile.dart';
 import 'package:cricland_admin/widgets/loading_widget.dart';
 import 'package:cricland_admin/widgets/text_field_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ArticleListPage extends StatefulWidget {
   const ArticleListPage({Key? key}) : super(key: key);
-
   @override
   State<ArticleListPage> createState() => _ArticleListPageState();
 }
@@ -49,8 +46,9 @@ class _ArticleListPageState extends State<ArticleListPage> {
                       value: controller.selectedCategory.value,
                       elevation: 0,
                       dropdownColor: StaticColor.whiteColor,
-                      onChanged: (newValue) {
+                      onChanged: (newValue) async{
                         controller.selectedCategory(newValue);
+                        await controller.searchArticle();
                       },
                       items: controller.categoryList
                           .map<DropdownMenuItem<String>>(
@@ -70,12 +68,19 @@ class _ArticleListPageState extends State<ArticleListPage> {
                   child: TextFieldWidget(
                     controller: controller.articleSearchKey,
                     labelText: StaticString.searchArticle,
+                    prefixIcon: Icons.cancel,
+                    prefixOnTap: ()async{
+                      controller.articleSearchKey.clear();
+                      await controller.searchArticle();
+                    },
                   ),
                 ),
                 SizedBox(width: dynamicSize(.02)),
 
                 ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async{
+                      await controller.searchArticle();
+                    },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                       child: Row(
