@@ -16,7 +16,7 @@ class WriteArticlePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ArticleController>(
-        init: ArticleController(context: context),
+        init: ArticleController(),
         autoRemove: true,
         builder: (controller) {
           return Obx(() => Row(
@@ -117,12 +117,10 @@ class WriteArticlePage extends StatelessWidget {
                                             controller
                                                 .selectedCategory(newValue);
                                           },
-                                          items: controller.categoryList.map<
-                                                  DropdownMenuItem<
-                                                      String>>(
-                                              (String value) {
-                                            return DropdownMenuItem<
-                                                String>(
+                                          items: controller.categoryList
+                                              .map<DropdownMenuItem<String>>(
+                                                  (String value) {
+                                            return DropdownMenuItem<String>(
                                               value: value,
                                               child: Text(value),
                                             );
@@ -160,8 +158,9 @@ class WriteArticlePage extends StatelessWidget {
                                   ? const LoadingWidget()
                                   : Center(
                                       child: ElevatedButton(
-                                          onPressed: () async{
-                                            await controller.addNewArticleWithImage();
+                                          onPressed: () async {
+                                            await controller
+                                                .addNewArticleWithImage();
                                           },
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
@@ -202,8 +201,7 @@ class WriteArticlePage extends StatelessWidget {
                               itemBuilder: (context, index) => ListTile(
                                 contentPadding: const EdgeInsets.all(0.0),
                                 dense: true,
-                                title: Text(
-                                    controller.categoryList[index],
+                                title: Text(controller.categoryList[index],
                                     style: TextStyle(
                                         fontSize: dynamicSize(.018),
                                         color: StaticColor.textColor)),
@@ -212,7 +210,7 @@ class WriteArticlePage extends StatelessWidget {
                                     SchedulerBinding.instance
                                         .addPostFrameCallback((_) {
                                       controller.categoryDeleteDialog(
-                                          controller.categoryList[index]);
+                                          controller.categoryList[index],context);
                                     });
                                   },
                                   icon: Icon(Icons.delete,

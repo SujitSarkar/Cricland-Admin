@@ -51,7 +51,7 @@ class _UpdateArticlePageState extends State<UpdateArticlePage> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ArticleController>(
-        init: ArticleController(context: context),
+        init: ArticleController(),
         autoRemove: true,
         builder: (controller) {
           return Obx(() => RawKeyboardListener(

@@ -18,10 +18,6 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 class ArticleController extends GetxController {
   static final ArticleController ac = Get.find();
 
-  ArticleController({required this.context});
-
-  BuildContext context;
-
   late RxBool loading;
   late RxBool addArticle;
   late TextEditingController category;
@@ -224,7 +220,7 @@ class ArticleController extends GetxController {
     }
   }
 
-  Future<void> deleteCategory(String categoryName) async {
+  Future<void> deleteCategory(String categoryName, BuildContext context) async {
     loading(true);
     try {
       QuerySnapshot snapshot = await FirebaseFirestore.instance
@@ -251,21 +247,23 @@ class ArticleController extends GetxController {
     }
   }
 
-  void categoryDeleteDialog(String categoryName) {
+  void categoryDeleteDialog(String categoryName,BuildContext context) {
     showDialog(
         context: context,
-        builder: (_) => AlertDialog(
-              title: const Text('Delete this category?'),
-              actions: [
-                TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('NO')),
-                Obx(() => loading.value
-                    ? const LoadingWidget()
-                    : TextButton(
-                        onPressed: () => deleteCategory(categoryName),
-                        child: const Text('YES')))
-              ],
+        builder: (_) => Material(
+              child: AlertDialog(
+                title: const Text('Delete this category?'),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('NO')),
+                  Obx(() => loading.value
+                      ? const LoadingWidget()
+                      : TextButton(
+                          onPressed: () => deleteCategory(categoryName,context),
+                          child: const Text('YES')))
+                ],
+              ),
             ));
   }
 

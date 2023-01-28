@@ -21,7 +21,7 @@ class _ArticleListPageState extends State<ArticleListPage> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ArticleController>(
-      init: ArticleController(context: context),
+      init: ArticleController(),
       builder: (controller)=> Obx(()=> controller.loading.value
           ? const LoadingWidget()
           : Padding(

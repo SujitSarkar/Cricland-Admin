@@ -3,12 +3,6 @@ import 'package:cricland_admin/constants/routes.dart';
 import 'package:cricland_admin/constants/static_string.dart';
 import 'package:cricland_admin/constants/static_variavles.dart';
 import 'package:cricland_admin/repository/article/controller/article_controller.dart';
-import 'package:cricland_admin/repository/article/screen/article_list.dart';
-import 'package:cricland_admin/repository/article/screen/update_article.dart';
-import 'package:cricland_admin/repository/article/screen/write_article.dart';
-import 'package:cricland_admin/repository/home/screen/home_screen.dart';
-import 'package:cricland_admin/repository/login/screen/login_screen.dart';
-import 'package:cricland_admin/repository/package/screen/add_package.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
@@ -38,7 +32,7 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Get.put(ArticleController(context: context));
+    Get.put(ArticleController());
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: StaticString.appName,

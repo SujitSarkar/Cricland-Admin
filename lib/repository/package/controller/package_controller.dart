@@ -14,9 +14,6 @@ import 'package:uuid/uuid.dart';
 class PackageController extends GetxController {
   static final PackageController pc = Get.find();
 
-  PackageController({required this.context});
-  BuildContext context;
-
   late RxBool loading;
   late TextEditingController packageName;
   late TextEditingController packagePrice;
@@ -76,7 +73,7 @@ class PackageController extends GetxController {
         final String id = uuId.v1();
         await FirebaseFirestore.instance
             .collection(StaticString.packageCollection)
-            .doc(packageId)
+            .doc(id)
             .set({
           'id': id,
           'package_name': packageName.text,

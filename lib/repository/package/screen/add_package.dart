@@ -16,7 +16,7 @@ class AddPackage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<PackageController>(
-        init: PackageController(context: context),
+        init: PackageController(),
         autoRemove: false,
         builder: (controller) {
           return Obx(
