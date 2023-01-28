@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cricland_admin/constants/dynamic_size.dart';
 import 'package:cricland_admin/constants/static_colors.dart';
 import 'package:cricland_admin/constants/static_string.dart';
 import 'package:cricland_admin/repository/article/controller/article_controller.dart';
-import 'package:cricland_admin/repository/article/model/category_model.dart';
 import 'package:cricland_admin/widgets/loading_widget.dart';
 import 'package:cricland_admin/widgets/text_field_widget.dart';
 import 'package:flutter/foundation.dart';
@@ -11,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 class WriteArticlePage extends StatelessWidget {
   const WriteArticlePage({Key? key}) : super(key: key);

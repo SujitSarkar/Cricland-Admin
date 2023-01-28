@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_network/image_network.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'package:pod_player/pod_player.dart';
 
 class UpdateArticlePage extends StatefulWidget {
   const UpdateArticlePage({Key? key}) : super(key: key);
@@ -21,22 +22,30 @@ class UpdateArticlePage extends StatefulWidget {
 
 class _UpdateArticlePageState extends State<UpdateArticlePage> {
   late YoutubePlayerController youtubePlayerController;
+  late PodPlayerController podController;
 
   @override
   void initState() {
     super.initState();
 
-    youtubePlayerController = YoutubePlayerController(
-      params: const YoutubePlayerParams(
-        startAt: Duration(seconds: 30),
-          showFullscreenButton: true,
-          autoPlay: false,
-        mute: true
-      ),
-    );
-    youtubePlayerController = YoutubePlayerController()..onInit = (){
-      youtubePlayerController.loadVideo(ArticleController.ac.youtubeVideoLink.text);
-    };
+    // youtubePlayerController = YoutubePlayerController(
+    //   params: const YoutubePlayerParams(
+    //     startAt: Duration(seconds: 30),
+    //       showFullscreenButton: true,
+    //       autoPlay: false,
+    //     mute: true,
+
+    //   ),
+    // );
+    // youtubePlayerController = YoutubePlayerController()..onInit = (){
+    //   youtubePlayerController.loadVideo(ArticleController.ac.youtubeVideoLink.text);
+    // };
+
+    podController = PodPlayerController(
+        playVideoFrom: PlayVideoFrom.youtube('https://youtu.be/A3ltMaM6noM'),
+        podPlayerConfig: const PodPlayerConfig(
+            autoPlay: true, isLooping: false, videoQualityPriority: [720, 360]))
+      ..initialise();
   }
 
   @override
@@ -46,217 +55,216 @@ class _UpdateArticlePageState extends State<UpdateArticlePage> {
         autoRemove: true,
         builder: (controller) {
           return Obx(() => RawKeyboardListener(
-            focusNode: FocusNode(),
-            autofocus: true,
-            onKey: (event) {
-              var offset =
-                  controller.writeArticleScrollController.offset;
-              if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-                if (kReleaseMode) {
-                  controller.writeArticleScrollController.animateTo(
-                      offset - 100,
-                      duration: const Duration(milliseconds: 30),
-                      curve: Curves.ease);
-                } else {
-                  controller.writeArticleScrollController.animateTo(
-                      offset - 100,
-                      duration: const Duration(milliseconds: 30),
-                      curve: Curves.ease);
-                }
-              } else if (event.logicalKey ==
-                  LogicalKeyboardKey.arrowDown) {
-                if (kReleaseMode) {
-                  controller.writeArticleScrollController.animateTo(
-                      offset + 100,
-                      duration: const Duration(milliseconds: 30),
-                      curve: Curves.ease);
-                } else {
-                  controller.writeArticleScrollController.animateTo(
-                      offset + 100,
-                      duration: const Duration(milliseconds: 30),
-                      curve: Curves.ease);
-                }
-              }
-            },
-            child: Scrollbar(
-              trackVisibility: true,
-              thumbVisibility: true,
-              controller: controller.writeArticleScrollController,
-              child: SingleChildScrollView(
-                controller: controller.writeArticleScrollController,
-                padding: EdgeInsets.all(dynamicSize(0.03)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ///Article Image
-                    Center(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          InkWell(
-                            onTap: () => controller.pickedImage(),
-                            borderRadius: const BorderRadius.all(
-                                Radius.circular(5)),
-                            child: Container(
-                              alignment: Alignment.center,
-                              height: dynamicSize(0.5),
-                              width: dynamicSize(0.7),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(5)),
-                              ),
-                              child: InkWell(
+                focusNode: FocusNode(),
+                autofocus: true,
+                onKey: (event) {
+                  var offset = controller.writeArticleScrollController.offset;
+                  if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+                    if (kReleaseMode) {
+                      controller.writeArticleScrollController.animateTo(
+                          offset - 100,
+                          duration: const Duration(milliseconds: 30),
+                          curve: Curves.ease);
+                    } else {
+                      controller.writeArticleScrollController.animateTo(
+                          offset - 100,
+                          duration: const Duration(milliseconds: 30),
+                          curve: Curves.ease);
+                    }
+                  } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+                    if (kReleaseMode) {
+                      controller.writeArticleScrollController.animateTo(
+                          offset + 100,
+                          duration: const Duration(milliseconds: 30),
+                          curve: Curves.ease);
+                    } else {
+                      controller.writeArticleScrollController.animateTo(
+                          offset + 100,
+                          duration: const Duration(milliseconds: 30),
+                          curve: Curves.ease);
+                    }
+                  }
+                },
+                child: Scrollbar(
+                  trackVisibility: true,
+                  thumbVisibility: true,
+                  controller: controller.writeArticleScrollController,
+                  child: SingleChildScrollView(
+                    controller: controller.writeArticleScrollController,
+                    padding: EdgeInsets.all(dynamicSize(0.03)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ///Article Image
+                        Center(
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              InkWell(
                                 onTap: () => controller.pickedImage(),
-                                child: controller.data != null
-                                    ? Image.memory(controller.data!)
-                                    : ImageNetwork(
-                                    image: controller.updateArticleModel.imageLink!,
-                                    imageCache: CachedNetworkImageProvider(controller.updateArticleModel.imageLink!),
-                                    height: 450,
-                                    width: 650,
-                                    duration: 1000,
-                                    curve: Curves.easeIn,
-                                    onPointer: true,
-                                    debugPrint: false,
-                                    fullScreen: false,
-                                    fitAndroidIos: BoxFit.contain,
-                                    fitWeb: BoxFitWeb.contain,
-                                    borderRadius: BorderRadius.circular(5),
-                                    onLoading: const CircularProgressIndicator(
-                                      color: Colors.indigoAccent,
-                                    ),
-                                    onError: const Icon(
-                                      Icons.error,
-                                      color: Colors.red,
-                                    )
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(5)),
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  height: dynamicSize(0.5),
+                                  width: dynamicSize(0.7),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade300,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(5)),
+                                  ),
+                                  child: InkWell(
+                                    onTap: () => controller.pickedImage(),
+                                    child: controller.data != null
+                                        ? Image.memory(controller.data!)
+                                        : ImageNetwork(
+                                            image: controller
+                                                .updateArticleModel.imageLink!,
+                                            imageCache:
+                                                CachedNetworkImageProvider(
+                                                    controller
+                                                        .updateArticleModel
+                                                        .imageLink!),
+                                            height: 450,
+                                            width: 650,
+                                            duration: 1000,
+                                            curve: Curves.easeIn,
+                                            onPointer: true,
+                                            debugPrint: false,
+                                            fullScreen: false,
+                                            fitAndroidIos: BoxFit.contain,
+                                            fitWeb: BoxFitWeb.contain,
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            onLoading:
+                                                const CircularProgressIndicator(
+                                              color: Colors.indigoAccent,
+                                            ),
+                                            onError: const Icon(
+                                              Icons.error,
+                                              color: Colors.red,
+                                            )),
+                                  ),
                                 ),
                               ),
-                            ),
+                              Positioned(
+                                top: 0.0,
+                                right: 0.0,
+                                child: IconButton(
+                                  onPressed: () => controller.pickedImage(),
+                                  icon: const Icon(Icons.add_a_photo,
+                                      color: StaticColor.primaryColor),
+                                ),
+                              )
+                            ],
                           ),
-                          Positioned(
-                            top: 0.0,
-                            right: 0.0,
-                            child: IconButton(
-                              onPressed: ()=>controller.pickedImage(),
-                              icon: const Icon(Icons.add_a_photo,
-                                  color: StaticColor.primaryColor),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: dynamicSize(0.03)),
-
-                    controller.loading.value
-                        ? const LoadingWidget()
-                        : Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(
-                          horizontal: dynamicSize(.02)),
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: StaticColor.primaryColor,
-                              width: 0.5),
-                          borderRadius: const BorderRadius.all(
-                              Radius.circular(5))),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value:
-                          controller.selectedCategory.value,
-                          elevation: 0,
-                          dropdownColor: StaticColor.whiteColor,
-                          onChanged: (newValue) {
-                            controller.selectedCategory(newValue);
-                          },
-                          items: controller.categoryList.map<
-                              DropdownMenuItem<
-                                  String>>(
-                                  (String value) {
-                                return DropdownMenuItem<
-                                    String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
                         ),
-                      ),
+                        SizedBox(height: dynamicSize(0.03)),
+
+                        controller.loading.value
+                            ? const LoadingWidget()
+                            : Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: dynamicSize(.02)),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: StaticColor.primaryColor,
+                                        width: 0.5),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(5))),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    value: controller.selectedCategory.value,
+                                    elevation: 0,
+                                    dropdownColor: StaticColor.whiteColor,
+                                    onChanged: (newValue) {
+                                      controller.selectedCategory(newValue);
+                                    },
+                                    items: controller.categoryList
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              ),
+                        SizedBox(height: dynamicSize(0.03)),
+
+                        TextFieldWidget(
+                          controller: controller.title,
+                          labelText: StaticString.articleTitle,
+                        ),
+                        SizedBox(height: dynamicSize(0.03)),
+
+                        TextFieldWidget(
+                          controller: controller.article,
+                          labelText: StaticString.articleContent,
+                          maxLine: 20,
+                          minLine: 20,
+                        ),
+                        SizedBox(height: dynamicSize(0.03)),
+
+                        TextFieldWidget(
+                          controller: controller.youtubeVideoLink,
+                          labelText: StaticString.youtubeVideoLink,
+                          maxLine: 1,
+                          minLine: 1,
+                        ),
+                        SizedBox(height: dynamicSize(0.03)),
+
+                        if (controller.youtubeVideoLink.text.isNotEmpty)
+                          // AspectRatio(
+                          //   aspectRatio: 2.5,
+                          //   child: YoutubePlayer(
+                          //     controller: youtubePlayerController,
+                          //     //aspectRatio: 16/9,
+                          //   ),
+                          // ),
+                          if (podController.isInitialised)
+                            PodVideoPlayer(controller: podController),
+                        SizedBox(height: dynamicSize(0.03)),
+
+                        controller.loading.value
+                            ? const LoadingWidget()
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                      onPressed: () async {
+                                        controller.articleDeleteDialog(context);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                          primary: StaticColor.deleteColor),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(StaticString.delete,
+                                            style: TextStyle(
+                                                fontSize: dynamicSize(.02))),
+                                      )),
+                                  SizedBox(width: dynamicSize(.04)),
+                                  ElevatedButton(
+                                      onPressed: () async {
+                                        await controller.updateArticle();
+                                        await controller.getArticle();
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(StaticString.update,
+                                            style: TextStyle(
+                                                fontSize: dynamicSize(.02))),
+                                      )),
+                                ],
+                              )
+                      ],
                     ),
-                    SizedBox(height: dynamicSize(0.03)),
-
-                    TextFieldWidget(
-                      controller: controller.title,
-                      labelText: StaticString.articleTitle,
-                    ),
-                    SizedBox(height: dynamicSize(0.03)),
-
-                    TextFieldWidget(
-                      controller: controller.article,
-                      labelText: StaticString.articleContent,
-                      maxLine: 20,
-                      minLine: 20,
-                    ),
-                    SizedBox(height: dynamicSize(0.03)),
-
-                    TextFieldWidget(
-                      controller: controller.youtubeVideoLink,
-                      labelText: StaticString.youtubeVideoLink,
-                      maxLine: 1,
-                      minLine: 1,
-                    ),
-                    SizedBox(height: dynamicSize(0.03)),
-
-                    if(controller.youtubeVideoLink.text.isNotEmpty)
-                    AspectRatio(
-                      aspectRatio: 2.5,
-                      child: YoutubePlayer(
-                        controller: youtubePlayerController,
-                        //aspectRatio: 16/9,
-                      ),
-                    ),
-                    SizedBox(height: dynamicSize(0.03)),
-
-                    controller.loading.value
-                        ? const LoadingWidget()
-                        : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                                onPressed: () async{
-                                  controller.articleDeleteDialog(context);
-                                },
-                                style: ElevatedButton.styleFrom(primary: StaticColor.deleteColor),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                      StaticString.delete,
-                                      style: TextStyle(
-                                          fontSize:
-                                          dynamicSize(.02))),
-                                )),
-                            SizedBox(width: dynamicSize(.04)),
-
-                            ElevatedButton(
-                                onPressed: () async{
-                                  await controller.updateArticle();
-                                  await controller.getArticle();
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                      StaticString.update,
-                                      style: TextStyle(
-                                          fontSize:
-                                          dynamicSize(.02))),
-                                )),
-                          ],
-                        )
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ));
+              ));
         });
   }
 }

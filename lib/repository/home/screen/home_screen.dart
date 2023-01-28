@@ -24,6 +24,10 @@ class HomeScreen extends StatelessWidget {
                   title: StaticString.writeArticle,
                   leading: Icons.edit_note,
                   route: Routes.writeArticle),
+              ScaffoldMenuItem(
+                  title: StaticString.package,
+                  leading: Icons.article,
+                  route: Routes.package),
             ],
             onMenuTap: (ScaffoldMenuItem val) {
               homeController.changeCurrentScreen(val.route);

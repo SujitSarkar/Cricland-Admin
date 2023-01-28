@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cricland_admin/constants/dynamic_size.dart';
 import 'package:cricland_admin/constants/routes.dart';
@@ -12,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
@@ -36,7 +36,6 @@ class ArticleController extends GetxController {
   late RxList<ArticleModel> articleList;
   late ScrollController writeArticleScrollController;
   late ScrollController articleListScrollController;
-
 
   ArticleModel updateArticleModel = ArticleModel();
 
@@ -110,10 +109,11 @@ class ArticleController extends GetxController {
   Future<void> getArticle() async {
     loading(true);
     try {
-      QuerySnapshot  snapshot = await FirebaseFirestore.instance
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection(StaticString.articleCollection)
-          .where('category',isEqualTo: selectedCategory.value)
-          .orderBy('time_stamp', descending: true).get();
+          .where('category', isEqualTo: selectedCategory.value)
+          .orderBy('time_stamp', descending: true)
+          .get();
       articleList.clear();
       for (var element in snapshot.docChanges) {
         ArticleModel model = ArticleModel(
@@ -143,15 +143,18 @@ class ArticleController extends GetxController {
   Future<void> searchArticle() async {
     loading(true);
     try {
-      QuerySnapshot?  snapshot;
-      if(articleSearchKey.text.isEmpty){
-        snapshot = await FirebaseFirestore.instance.collection(StaticString.articleCollection)
-        .where('category',isEqualTo: selectedCategory.value)
-        .get();
-      }else{
-        snapshot = await FirebaseFirestore.instance.collection(StaticString.articleCollection)
-            .where('category',isEqualTo: selectedCategory.value)
-            .where('title'.toLowerCase(),isLessThanOrEqualTo: articleSearchKey.text.toLowerCase())
+      QuerySnapshot? snapshot;
+      if (articleSearchKey.text.isEmpty) {
+        snapshot = await FirebaseFirestore.instance
+            .collection(StaticString.articleCollection)
+            .where('category', isEqualTo: selectedCategory.value)
+            .get();
+      } else {
+        snapshot = await FirebaseFirestore.instance
+            .collection(StaticString.articleCollection)
+            .where('category', isEqualTo: selectedCategory.value)
+            .where('title'.toLowerCase(),
+                isLessThanOrEqualTo: articleSearchKey.text.toLowerCase())
             .get();
       }
 
@@ -403,7 +406,8 @@ class ArticleController extends GetxController {
       } else {
         showToast(StaticString.articleTitleAndContent);
       }
-    } else { ///Update without image
+    } else {
+      ///Update without image
       loading(true);
       try {
         await FirebaseFirestore.instance
@@ -435,24 +439,26 @@ class ArticleController extends GetxController {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('Delete this article?'),
-          actions: [
-            TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('NO')),
-            Obx(() => loading.value
-                ? const LoadingWidget()
-                : TextButton(
-                onPressed: () => deleteArticle(context),
-                child: const Text('YES')))
-          ],
-        ));
+              title: const Text('Delete this article?'),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('NO')),
+                Obx(() => loading.value
+                    ? const LoadingWidget()
+                    : TextButton(
+                        onPressed: () => deleteArticle(context),
+                        child: const Text('YES')))
+              ],
+            ));
   }
 
   Future<void> deleteArticle(BuildContext context) async {
     loading(true);
     try {
-      await firebase_storage.FirebaseStorage.instance.refFromURL(updateArticleModel.imageLink!).delete();
+      await firebase_storage.FirebaseStorage.instance
+          .refFromURL(updateArticleModel.imageLink!)
+          .delete();
       await FirebaseFirestore.instance
           .collection(StaticString.articleCollection)
           .doc(updateArticleModel.id!)
